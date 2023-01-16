@@ -1,41 +1,41 @@
 #include "List.h"
 
-    // сохранение списка в файл, файл открыт с помощью 'fopen(path, "wb"'
+    // СЃРѕС…СЂР°РЅРµРЅРёРµ СЃРїРёСЃРєР° РІ С„Р°Р№Р», С„Р°Р№Р» РѕС‚РєСЂС‹С‚ СЃ РїРѕРјРѕС‰СЊСЋ 'fopen(path, "wb"'
 void List::Serialize(FILE* file)
 {
     if (file) {
-        std::unordered_map<ListNode*, int> id;   //хеш-таблица соответствия элемента с его номером
+        std::unordered_map<ListNode*, int> id;   //С…РµС€-С‚Р°Р±Р»РёС†Р° СЃРѕРѕС‚РІРµС‚СЃС‚РІРёВ¤ СЌР»РµРјРµРЅС‚Р° СЃ РµРіРѕ РЅРѕРјРµСЂРѕРј
         int idCount = 0;
-        // присваиваем каждому элементу свой номер
+        // РїСЂРёСЃРІР°РёРІР°РµРј РєР°Р¶РґРѕРјСѓ СЌР»РµРјРµРЅС‚Сѓ СЃРІРѕР№ РЅРѕРјРµСЂ
         for (ListNode* node = head; node != nullptr; node = node->next)
         {
             std::pair<ListNode*, int> temp(node, idCount);
             idCount++;
             id.insert(temp);
         }
-        // запись общего количества элементов списка
+        // Р·Р°РїРёСЃСЊ РѕР±С‰РµРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°
         fwrite((const void*)&count, sizeof(count), 1, file);
         for (ListNode* node = head; node != nullptr; node = node->next) {
             size_t sizeData = node->data.size();
-            // запись размера строки данных
+            // Р·Р°РїРёСЃСЊ СЂР°Р·РјРµСЂР° СЃС‚СЂРѕРєРё РґР°РЅРЅС‹С…
             fwrite((const void*)&sizeData, sizeof(size_t), 1, file);
-            // запись строки данных
+            // Р·Р°РїРёСЃСЊ СЃС‚СЂРѕРєРё РґР°РЅРЅС‹С…
             fwrite((const void*)node->data.c_str(), sizeData, 1, file);
         }
-        // запись номеров элементов поля rand
+        // Р·Р°РїРёСЃСЊ РЅРѕРјРµСЂРѕРІ СЌР»РµРјРµРЅС‚РѕРІ РїРѕР»В¤ rand
         for (ListNode* node = head; node != nullptr; node = node->next) {
             int randId = (node->rand) ? id[node->rand] : -1;
             fwrite((const void*)&randId, sizeof(int), 1, file);
         }
     }
 }
-// восстановление списка из файла, файл открыт с помощью 'fopen(path, "rb")'
+// РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ СЃРїРёСЃРєР° РёР· С„Р°Р№Р»Р°, С„Р°Р№Р» РѕС‚РєСЂС‹С‚ СЃ РїРѕРјРѕС‰СЊСЋ 'fopen(path, "rb")'
 void List::Deserialize(FILE* file)
  {
     if (file)
     {
         Clear();
-        // чтение общего количества элементов списка
+        // С‡С‚РµРЅРёРµ РѕР±С‰РµРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°
         int newCount = -1;
         fread(&newCount, sizeof(int), 1, file);
         if (newCount > 0)
@@ -45,20 +45,20 @@ void List::Deserialize(FILE* file)
             {
                 size_t size = 0;
                 std::string data;
-                // чтение размера строки
+                // С‡С‚РµРЅРёРµ СЂР°Р·РјРµСЂР° СЃС‚СЂРѕРєРё
                 fread((void*)&size, sizeof(size_t), 1, file);
                 if (size > 0) {
                     data.resize(size);
-                    // чтение строки
+                    // С‡С‚РµРЅРёРµ СЃС‚СЂРѕРєРё
                     fread((void*)&data[0], size, 1, file);
-                    // создание элемента спика
+                    // СЃРѕР·РґР°РЅРёРµ СЌР»РµРјРµРЅС‚Р° СЃРїРёРєР°
                     Add(data);
                     nodes.push_back(tail);
                 }
             }
             for (ListNode* node = head; node != nullptr; node = node->next)
             {
-                // чтение параметра rand
+                // С‡С‚РµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° rand
                 int randId = -1;
                 fread((void*)&randId, sizeof(int), 1, file);
                 if (randId >= 0 && randId < count)
@@ -69,7 +69,7 @@ void List::Deserialize(FILE* file)
         }
     }
 }
-// добавление нового элемента в конец списка
+// РґРѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РІ РєРѕРЅРµС† СЃРїРёСЃРєР°
 void List::Add(std::string data)
 {
     ListNode* node = new ListNode;
@@ -89,7 +89,7 @@ void List::Add(std::string data)
     count++;
 
 }
- // Очистка списка
+ // СњС‡РёСЃС‚РєР° СЃРїРёСЃРєР°
 void List::Clear()
 {
     ListNode* node = head;
